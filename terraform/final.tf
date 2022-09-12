@@ -1,3 +1,11 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+}
 provider "aws" {
   region     = ""
   access_key = ""
@@ -207,7 +215,7 @@ resource "aws_security_group" "SG_for_ELB" {
 }
 
 resource "aws_db_subnet_group" "default" {
-  name       = "main"
+  name       = "main_db_subnet"
   subnet_ids = [aws_subnet.eu-west-2a.id, aws_subnet.eu-west-2b.id]
 }
 
@@ -242,7 +250,10 @@ resource "aws_key_pair" "kp" {
   public_key = tls_private_key.pk.public_key_openssh
 
   provisioner "local-exec" { # Create a "myKey.pem" to your computer!!
-    command = "echo '${tls_private_key.pk.private_key_pem}' > ~/.ssh/myKey | chmod 400 ~/.ssh/myKey"
+    command = <<-EOT 
+      sudo echo '${tls_private_key.pk.private_key_pem}' > ~/.ssh/myKey
+      sudo chmod 600 ~/.ssh/myKey
+    EOT
   }
 }
 
@@ -317,9 +328,9 @@ resource "aws_elb" "my_elb" {
 resource "local_file" "wp_config" {
   filename = "../ansible/roles/wordpress/files/wp-config.php"
   content = templatefile("./wp-config.tmpl", {
-    database_name = "WP_DB"
-    username      = "admin"
-    password      = "Password123"
+    database_name = var.rds_credentials.db_name
+    username      = var.rds_credentials.username
+    password      = var.rds_credentials.password
     db_host       = aws_db_instance.mysql.endpoint
   })
   depends_on = [aws_db_instance.mysql, aws_autoscaling_group.my_asg]
