@@ -1,2 +1,5 @@
-# Wordpress_Scalable
-Deploy WP app on AWS cloud using Terraform and Ansible. Scale up using AWS services stack of EFS, RDS, ASG and more. 
+# Project using AWS services, terraform and ansible role for creating scalable wordpress website and databases
+
+# Architecture:  
+<img src="./AWS_WP_EFS.drawio.png" width="350" height="446">
+

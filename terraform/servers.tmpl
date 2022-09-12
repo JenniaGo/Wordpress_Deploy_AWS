@@ -1,0 +1,8 @@
+nodes:
+  vars:
+    interpreter_python: auto_legacy
+    ansible_user: ec2-user
+    ansible_become: yes
+    ansible_ssh_private_key_file: ~/.ssh/Test_key
+  hosts:
+    ${ip}
