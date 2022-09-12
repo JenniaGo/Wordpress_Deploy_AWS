@@ -1,8 +1,8 @@
 provider "aws" {
-  region     = "us-west-2"
-  access_key = "ASIAWHO23LDQQM33WLVV"
-  secret_key = "BSrS738LVNasBNXzLOKdSUtStkPgmoahlEaSqPyh"
-  token = "FwoGZXIvYXdzEPP//////////wEaDDMEQboIo1fAwXQ3JiLIAQ6UjuHLxfqHQLj0Z8IcJE4Esqmr5zcBWYItv+9NXBdw4/Kkvak8SjFKlBLwoyMBk0mRdrJ5uDF/b9njtUpuAg48+5xTLLG/ChL8oDu6i+lIwA92BX29682u1NQCdk5F6BjK5paSZyux8UPtTmzKv/QSKTJhfdVwLNEImlENNkcVKZVfyaaFov1PhMCKiMOoi5dM2YsgSbYNJAFKiqXSmVIPMcHL/wI3SQ3pn4W5bhLLrreL59a4IGRRgE/Au2kBkrJhNBpLThODKJO1+JgGMi0Iqrv3YzJQXqmjxW9n6763twa4uWInklwGT9P6yXcKUllC9bjLmLvf08eq+6c="
+  region     = ""
+  access_key = ""
+  secret_key = ""
+  token = ""
 }
 module "myip" {
   source  = "4ops/myip/http"
@@ -218,9 +218,9 @@ resource "aws_db_instance" "mysql" {
   instance_class                  = "db.t2.micro"
   db_subnet_group_name            = aws_db_subnet_group.default.name
   enabled_cloudwatch_logs_exports = ["general", "error"]
-  db_name                         = "WP_DB"
-  username                        = "admin"
-  password                        = "Password123"
+  db_name                         = var.rds_credentials.dbname
+  username                        = var.rds_credentials.username
+  password                        = var.rds_credentials.password
   allocated_storage               = 20
   max_allocated_storage           = 0
   backup_retention_period         = 7
