@@ -1,8 +1,8 @@
 variable rds_credentials {
   type    = object({
-    username = "admin"
-    password = "Password123"
-    dbname = "WP-DB"
+    username = string
+    password = string
+    dbname = string
   })
 
   default = {
@@ -11,5 +11,5 @@ variable rds_credentials {
     dbname = "<dbname>"
   }
   
-  description = "Master DB username, Password and Database name for RDS"
+  description = "Master DB username, password and dbname for RDS"
 }
