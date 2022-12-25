@@ -1,0 +1,48 @@
+- name: Check WordPress website on container in EC2
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+    - name: Ensure Python and boto3 are installed
+      become: yes
+      package:
+        name:
+          - python3
+          - python3-boto3
+        state: present
+
+    - name: Set up AWS credentials
+      become: yes
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key_id }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_access_key }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+
+    - name: Get EC2 instance information
+      become: yes
+      ec2_instance_info:
+        instance_ids: "{{ ec2_instance_id }}"
+        region: "{{ aws_region }}"
+      register: ec2_instance
+
+    - name: Check if EC2 instance is running
+      become: yes
+      assert:
+        that: ec2_instance.instances[0].state.name == 'running'
+      ignore_errors: yes
+
+    - name: Get EC2 instance public IP
+      become: yes
+      set_fact:
+        ec2_public_ip: "{{ ec2_instance.instances[0].public_ip_address }}"
+
+    - name: Check WordPress website on container in EC2
+      become: yes
+      uri:
+        url: "http://{{ ec2_public_ip }}"
+        timeout: 10
+      register: website_response
+
+    - name: Print website response status
+      debug:
+        msg: "Website response status: {{ website_response.status }}"
